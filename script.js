@@ -16,6 +16,45 @@ let longitude = 0;
 let map;
 let eventMap;
 
+class Workout {
+  date = new Date();
+  id = (Date.now() + '').slice(-10);
+
+  constructor(distance, duration, coords) {
+    this.distance = distance; // km
+    this.duration = duration; // min
+    this.coords = coords; // [23,-44.5]
+  }
+}
+
+class Running extends Workout {
+  constructor(distance, duration, coords, cadence) {
+    super(distance, duration, coords);
+    this.cadence = cadence;
+    this.calcPace();
+  }
+  calcPace() {
+    this.pace = this.duration / this.distance;
+    return this.pace;
+  }
+}
+class Cycling extends Workout {
+  constructor(distance, duration, coords, elevation) {
+    super(distance, duration, coords);
+    this.elevation = elevation;
+    this.calcSpeed();
+  }
+  calcSpeed() {
+    this.speed = this.distance / (this.duration / 60);
+    return this.speed;
+  }
+}
+
+const running1 = new Running(10, 47, [22, -55], 178);
+const cycling1 = new Cycling(10, 14, [22, -55], 523);
+console.log(running1, cycling1);
+
+// App Class
 class App {
   #map;
   #eventMap;
@@ -91,5 +130,4 @@ class App {
       .openPopup();
   }
 }
-
 const magicMap = new App();
