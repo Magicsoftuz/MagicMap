@@ -89,6 +89,8 @@ class App {
     inputType.addEventListener('change', this._toggleElevetionField);
 
     containerWorkouts.addEventListener('click', this._movePopup.bind(this));
+
+    this._getLocalStorage();
   }
 
   _getPosition() {
@@ -116,6 +118,10 @@ class App {
     this.#map.on('click', this._showForm.bind(this));
 
     L.circle([latitude, longitude], { radius: 20 }).addTo(this.#map);
+
+    this.#workout.forEach(el => {
+      this._renderWorkoutMaker(el);
+    });
   }
 
   _showForm(e) {
@@ -200,14 +206,18 @@ class App {
     //Render workout on list
     this._renderWorkout(workouts);
 
+    //Set LocalStorage
+    this._setLocalStorage();
+
     //Hide and Clear fields
     this._hideForm();
   }
 
   _renderWorkoutMaker(workout) {
-    L.marker([this.#eventMap.latlng.lat, this.#eventMap.latlng.lng], {
+    console.log(workout);
+    L.marker(workout.coords, {
       riseOnHover: true,
-      opacity: 0.5,
+      opacity: 1,
       draggable: true,
     })
       .addTo(this.#map)
@@ -286,6 +296,24 @@ class App {
         duration: 1,
       },
     });
+  }
+  _setLocalStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workout));
+  }
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+    if (!data) return;
+    console.log(data);
+    this.#workout = data;
+
+    this.#workout.forEach(el => {
+      this._renderWorkout(el);
+    });
+  }
+
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 const magicMap = new App();
